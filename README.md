@@ -48,4 +48,4 @@ This software has created with the following technical services:
 
 Using these technical services is recommended, by using something different could result in getting errors.
 
-(c) [rileydeman](https://www.rileydeman.com/) | (c) Tristan | (c) Jesse
+(c) [rileydeman](https://www.rileydeman.com/) | (c) Julia
