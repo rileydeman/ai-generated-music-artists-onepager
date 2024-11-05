@@ -1,14 +1,34 @@
 <?php
-// index.php
 require 'includes/db.php';
+require 'includes/spotify.php';
 
 $artistInfo = null;
+$suggestions = [];
+
 if (isset($_POST['artist'])) {
     $artist = $_POST['artist'];
     $stmt = $pdo->prepare("SELECT * FROM artists WHERE name LIKE ?");
     $stmt->execute(["%$artist%"]);
     $artistInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // If we have a matching artist, fetch details from Spotify
+    if ($artistInfo) {
+        // Get the Spotify details using the spotify_id
+        $spotifyDetails = getArtistDetails($artistInfo['spotify_id']);
+        if (isset($spotifyDetails['images']) && count($spotifyDetails['images']) > 0) {
+            $artistInfo['image_url'] = $spotifyDetails['images'][0]['url']; // Get the first image
+        } else {
+            $artistInfo['image_url'] = null; // No image available
+        }
+    }
 }
+
+if (isset($_GET['query'])) {
+    $query = $_GET['query'];
+    $spotifyResults = searchArtists($query);
+    $suggestions = $spotifyResults['artists']['items'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -23,8 +43,9 @@ if (isset($_POST['artist'])) {
 <div class="container">
     <h1>Music Artist Database</h1>
     <form method="POST" action="">
-        <input type="text" name="artist" placeholder="Search for an artist...">
+        <input type="text" id="artist-input" name="artist" placeholder="Search for an artist..." autocomplete="off">
         <button type="submit">Search</button>
+        <ul id="suggestions"></ul>
     </form>
 
     <div class="artist-info">
@@ -32,7 +53,10 @@ if (isset($_POST['artist'])) {
             <h2><?php echo htmlspecialchars($artistInfo['name']); ?></h2>
             <p><strong>Genre:</strong> <?php echo htmlspecialchars($artistInfo['genre']); ?></p>
             <p><?php echo htmlspecialchars($artistInfo['bio']); ?></p>
-            <img src="<?php echo $artistInfo['image_url']; ?>" alt="Artist image">
+            <?php if (isset($artistInfo['image_url'])): ?>
+                <img src="<?php echo htmlspecialchars($artistInfo['image_url']); ?>" alt="Artist image" />
+            <?php endif; ?>
+            <p><a href="https://open.spotify.com/artist/<?php echo htmlspecialchars($artistInfo['spotify_id']); ?>" target="_blank">Listen on Spotify</a></p>
         <?php else: ?>
             <p>No artist found. Try searching for another artist.</p>
         <?php endif; ?>
