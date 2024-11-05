@@ -6,7 +6,7 @@ $artistInfo = null;
 $suggestions = [];
 
 if (isset($_POST['artist'])) {
-    $artist = $_POST['artist'];
+    $artist = trim($_POST['artist']);  // Trim any leading or trailing whitespace
     $stmt = $pdo->prepare("SELECT * FROM artists WHERE name LIKE ?");
     $stmt->execute(["%$artist%"]);
     $artistInfo = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -24,11 +24,10 @@ if (isset($_POST['artist'])) {
 }
 
 if (isset($_GET['query'])) {
-    $query = $_GET['query'];
+    $query = trim($_GET['query']);  // Trim any leading or trailing whitespace
     $spotifyResults = searchArtists($query);
     $suggestions = $spotifyResults['artists']['items'];
 }
-
 ?>
 
 <!DOCTYPE html>
