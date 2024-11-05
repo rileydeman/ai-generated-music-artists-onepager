@@ -1,0 +1,9 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+
+RewriteRule ^(.*)$ public/$1.php
+
+RewriteRule ^config.ini index.php
+
+ErrorDocument 404 /index.php

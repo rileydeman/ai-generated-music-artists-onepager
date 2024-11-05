@@ -32,7 +32,7 @@ if (isset($_POST['artist'])) {
             <h2><?php echo htmlspecialchars($artistInfo['name']); ?></h2>
             <p><strong>Genre:</strong> <?php echo htmlspecialchars($artistInfo['genre']); ?></p>
             <p><?php echo htmlspecialchars($artistInfo['bio']); ?></p>
-            <img src="<?php echo htmlspecialchars($artistInfo['image_url']); ?>" alt="Artist image">
+            <img src="<?php echo $artistInfo['image_url']; ?>" alt="Artist image">
         <?php else: ?>
             <p>No artist found. Try searching for another artist.</p>
         <?php endif; ?>
